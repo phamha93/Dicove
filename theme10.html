@@ -1,0 +1,143 @@
+﻿<!doctype html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if IE 9 ]><html class="ie9 no-js"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+
+  <!-- Basic page needs ================================================== -->
+  <meta charset="utf-8" />
+  <!--[if IE]><meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'><![endif]-->
+
+  
+
+  <!-- Title and description ================================================== -->
+  <title>
+  {% if settings.favicon_enable %}
+  <link rel="shortcut icon" href="{{ 'favicon.png' | asset_url }}" type="image/png" />
+  {% endif %}
+
+    {{ page_title }}{% if current_tags %}{% assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags }}{% endif %}{% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}
+  </title>
+
+  {% if page_description %}
+  <meta content="{{ page_description | escape }}">
+  {% endif %}
+
+  <!-- Helpers ================================================== -->
+  {% include 'social-meta-tags' %}
+  <link rel="canonical" href="{{ canonical_url }}">
+  <meta  content="width=device-width,initial-scale=1">
+  <meta  content="{{ settings.color_primary }}">
+  <!--  Stylesheet  will import in snoppets/header-stylesheets.liquid-->
+  {% include 'header-stylesheets'  %}
+  <!--  Stylesheet  will import in snoppets/header-scripts.liquid-->
+  {% include 'header-scripts' %}
+
+  
+  {{ 'mediaelement-and-player.min.js' | asset_url | script_tag }}
+{{ 'mediaelementplayer.min.css' | asset_url | stylesheet_tag }}
+  <!-- Header hook for plugins ================================================== -->
+  {{ content_for_header }}
+</head>
+
+{% comment %}
+Add the page template as a class for easy page or template specific styling.
+{% endcomment %}
+<body id="{{ page_title | handle }}" class="{% if customer %}customer-logged-in {% endif %}template-{{ template | replace: '.', ' ' | truncatewords: 1, '' | handle }}" >
+
+  {% if settings.layout_width == 'container-fluid' %}
+ 	 {% assign layout_width = 'container-fluid' %}
+  {% else %}
+  	{% assign layout_widths = 'container-box' %}
+  	{% assign layout_width = 'container' %}
+  {% endif %}
+{{ 'mobile_menu.js' | asset_url | script_tag  }}
+  <div class="{{layout_widths}}">
+     <div class="{{layout_width}}">
+
+      {%comment%}
+        -top_link.
+        -site_nav.
+      {% endcomment %}
+      <!-- Header ================================================== -->
+      {% include 'header' %}
+       <div class="container">
+         <div class="alert-hidden group-alert">
+           <div id="wishlist-log" class="alert-hidden alert alert-info"><i class="fa fa-check-circle"></i> YOU MUST <a href="/account/login">LOGIN</a> OR <a href="/account/register">CREATE AN ACCOUNT</a> TO SAVE PRODUCT TO YOUR <a href="/collections/wishlist">WISH LIST</a>!</div>
+           <div id="wishlist-su" class="alert-hidden alert alert-success"><i class="fa fa-check-circle"></i> Success: You have added product to your <a href="/collections/wishlist">wish list</a>!</div>
+           <div id="wishlist-info" class="alert-hidden alert alert-info"><i class="fa fa-check-circle"></i>Product  IS ALREADY IN YOUR <a href="/collections/wishlist">WISH LIST</a>!</div>
+
+           <div id="compare-w" class="alert-hidden alert alert-warning"><i class="fa fa-check-circle"></i>Product Added over 3 product !. Do you want go to <a href="/pages/compare">compare page</a> ?</div>
+           <div id="cart-su" class="alert-hidden alert alert-success"><i class="fa fa-check-circle"></i> SUCCESS: YOU HAVE ADDED product TO YOUR <a href="/cart">SHOPPING CART</a>!</div>
+         </div>
+       </div>
+      <main class="main-content">
+        {{ content_for_layout }}
+      </main>
+
+      <!-- Footer ================================================== -->
+      {% include 'footer' %}
+
+    </div>
+    <div id="loading">
+      {{ 'lightbox/v204/loading.gif' | global_asset_url |img_tag}}
+    </div>
+  </div> 
+<div class="modal fade bs-example-modal-lg" id="moda-compare" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content" id="compare-modal">
+        <div class="modal-header">
+
+          <h4 class="modal-title">COMPARE PRODUCTS</h4>
+        </div>
+        <div class="modal-body">
+          <table class="table table-hover">
+            <thead>
+              <tr class="th-compare">
+
+              </tr>
+            </thead>
+            <tbody id="table-compare">
+
+            </tbody>
+
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+    {% include 'modal-quickview' %}
+    {% include 'modal-register'  %}
+    <!--  Script will import in snippets/bottom-scripts.liqu-->
+    {% include 'bottom-scripts' %}
+  {% include 'currencies' %}
+  <script type="text/javascript">
+    if (window.location.protocol !== 'https:') {
+    window.location = 'https://' + window.location.hostname + window.location.pathname + window.location.hash;
+}
+    jQuery(document).ready(function($){
+  
+      $('.currency-select').click(function(e){
+        var name_currency = $(this).attr('name');
+        $('.currency-picker').val(name_currency);
+        $('#currency_display').text(name_currency);
+        $(".change-currency").text(name_currency);
+        $('.currency-picker').val(name_currency).change();
+  Currency.cookie.write(name_currency);
+        
+        //location.reload(); 
+      });
+
+      if (cookieCurrency != null) {
+        $("#currency_display").text(cookieCurrency);
+      }
+
+    });
+    
+  
+  </script>
+</body>
+</html>
